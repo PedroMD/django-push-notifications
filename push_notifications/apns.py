@@ -89,7 +89,14 @@ def _apns_create_socket(address_tuple, certfile=None):
 
 
 def _apns_create_socket_to_push(certfile=None):
-	return _apns_create_socket((SETTINGS["APNS_HOST"], SETTINGS["APNS_PORT"]), certfile)
+    # return _apns_create_socket((SETTINGS["APNS_HOST"], SETTINGS["APNS_PORT"]), certfile)
+	# Trying to fix APNS bulk bug, by applying simple hack:
+	# https://github.com/jleclanche/django-push-notifications/issues/242#issuecomment-208692118
+	try:
+        return _apns_create_socket((SETTINGS["APNS_HOST"], SETTINGS["APNS_PORT"]))
+    except Exception:
+        # retry
+        return _apns_create_socket((SETTINGS["APNS_HOST"], SETTINGS["APNS_PORT"])) 
 
 
 def _apns_create_socket_to_feedback(certfile=None):
